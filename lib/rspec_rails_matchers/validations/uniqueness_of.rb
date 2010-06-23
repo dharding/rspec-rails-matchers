@@ -26,7 +26,11 @@ module RspecRailsMatchers
           end
           
           def create_duplicate_record( model, attr, scope )
-            m = model.class.new(attr => 'foobar')
+            begin
+              m = Factory.build(model.class.name.underscore, attr => 'foobar')
+            rescue
+              m = model.class.new(attr => 'foobar')
+            end
             m.send("#{scope}=", 11) if scope
             m.save(:validate => false)
             m
